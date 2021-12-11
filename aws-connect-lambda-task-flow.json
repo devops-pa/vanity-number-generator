@@ -1,0 +1,236 @@
+{
+  "modules": [
+    {
+      "id": "a947685a-fcfb-4e6f-9cde-b23a3a33130b",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "96f62f74-1905-40cd-acca-714c0782717a"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "vanity_numbers",
+          "namespace": "External"
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 920,
+          "y": 30
+        },
+        "useDynamic": true
+      }
+    },
+    {
+      "id": "96f62f74-1905-40cd-acca-714c0782717a",
+      "type": "Disconnect",
+      "branches": [],
+      "parameters": [],
+      "metadata": {
+        "position": {
+          "x": 1193,
+          "y": 284
+        }
+      }
+    },
+    {
+      "id": "f2c6d111-89bc-487e-b441-eaa31bd9e672",
+      "type": "SetAttributes",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "a947685a-fcfb-4e6f-9cde-b23a3a33130b"
+        },
+        {
+          "condition": "Error",
+          "transition": "cc4f9ae2-749f-41cb-825a-89cdf6060bac"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Attribute",
+          "value": "vanity_numbers",
+          "key": "vanity_numbers",
+          "namespace": "User Defined"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 691,
+          "y": 24
+        },
+        "dynamicParams": [
+          "vanity_numbers"
+        ]
+      }
+    },
+    {
+      "id": "cc4f9ae2-749f-41cb-825a-89cdf6060bac",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "96f62f74-1905-40cd-acca-714c0782717a"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "There was an error reading generated phone numbers",
+          "namespace": null
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 950,
+          "y": 201
+        },
+        "useDynamic": false
+      }
+    },
+    {
+      "id": "efd1be7a-bdca-47c3-af48-3ca142b25f3a",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "f2c6d111-89bc-487e-b441-eaa31bd9e672"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "Generation complete",
+          "namespace": null
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 446,
+          "y": 37
+        },
+        "useDynamic": false
+      }
+    },
+    {
+      "id": "f23b487c-bb49-4344-8909-c74ba6050411",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "96f62f74-1905-40cd-acca-714c0782717a"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "There was an error generating phone numbers",
+          "namespace": null
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 454,
+          "y": 271
+        },
+        "useDynamic": false
+      }
+    },
+    {
+      "id": "4d36a741-bc87-4035-b3fa-9c8390e687ac",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "7eefafd6-402f-4759-967c-b017ef5f3969"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "Please hold on while i generate some vanity numbers for you.",
+          "namespace": null
+        },
+        {
+          "name": "TextToSpeechType",
+          "value": "text"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 148,
+          "y": 16
+        },
+        "useDynamic": false
+      }
+    },
+    {
+      "id": "7eefafd6-402f-4759-967c-b017ef5f3969",
+      "type": "InvokeExternalResource",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "efd1be7a-bdca-47c3-af48-3ca142b25f3a"
+        },
+        {
+          "condition": "Error",
+          "transition": "f23b487c-bb49-4344-8909-c74ba6050411"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "FunctionArn",
+          "value": "<FUNCTION ARN>",
+          "namespace": null
+        },
+        {
+          "name": "TimeLimit",
+          "value": "8"
+        }
+      ],
+      "metadata": {
+        "position": {
+          "x": 143,
+          "y": 210
+        },
+        "dynamicMetadata": {},
+        "useDynamic": false
+      },
+      "target": "Lambda"
+    }
+  ],
+  "version": "1",
+  "start": "4d36a741-bc87-4035-b3fa-9c8390e687ac",
+  "metadata": {
+    "entryPointPosition": {
+      "x": 15,
+      "y": 15
+    },
+    "snapToGrid": false,
+    "name": "lambda-task-flow",
+    "description": "Invokes a lambda function to determine information about the user.",
+    "type": "contactFlow",
+    "status": "published",
+    "hash": "18a43c4b164759dc0518d991d16159f5f054aff4ce5c129cf26d8c8e6beb4dce"
+  },
+  "type": "contactFlow"
+}

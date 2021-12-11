@@ -1,0 +1,80 @@
+Transform: AWS::Serverless-2016-10-31
+
+Description: A sample template to deploy Vanity Number Generator Infrastructure
+
+Resources:
+  VanityNumberGeneratorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: vanity-number-converter.handler
+      MemorySize: 256
+      Role: !GetAtt VanityNumberGeneratorFunctionRole.Arn
+      Runtime: nodejs14.x
+      FunctionName: !Join
+        - "-"
+        -
+          - !Ref AWS::StackName
+          - 'generator'
+      Timeout: 8
+      Environment:
+        Variables:
+          OUTPUT_TABLE_NAME: !Join
+            - "-"
+            -
+              - !Ref AWS::StackName
+              - 'output'        
+  VanityNumberGeneratorFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join
+        - "-"
+        -
+          - !Ref AWS::StackName
+          - 'generator'
+          - 'role'
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DynamoDbAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                Resource: !GetAtt VanityNumberGeneratorOutput.Arn
+  VanityNumberGeneratorOutput:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: phone
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: phone
+          KeyType: HASH
+      TableName: !Join
+        - "-"
+        -
+          - !Ref AWS::StackName
+          - 'output'
+Outputs:
+  VanityNumberGeneratorFunctionArn:
+    Description: The ARN of the Vanity Number Generator Function
+    Value: !GetAtt VanityNumberGeneratorFunction.Arn
+  VanityNumberGeneratorFunctionRoleArn:
+    Description: The ARN of the Vanity Number Generator Function Role
+    Value: !GetAtt VanityNumberGeneratorFunctionRole.Arn
+  VanityNumberGeneratorOutputTableArn:
+    Description: The ARN of the Vanity Number Generator Output Table
+    Value: !GetAtt VanityNumberGeneratorOutput.Arn
